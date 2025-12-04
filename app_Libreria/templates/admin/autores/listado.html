@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-verde">Gestión de Autores</h1>
+        <a href="{% url 'agregar_autor' %}" class="btn btn-verde">➕ Agregar Autor</a>
+    </div>
+    
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+    
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Nacionalidad</th>
+                            <th>Fecha Nacimiento</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for autor in autores %}
+                        <tr>
+                            <td>{{ autor.autorid }}</td>
+                            <td>{{ autor.nombre }}</td>
+                            <td>{{ autor.apellido }}</td>
+                            <td>{{ autor.nacionalidad }}</td>
+                            <td>{{ autor.fechanacimiento }}</td>
+                            <td>
+                                <a href="{% url 'editar_autor' autor.autorid %}" class="btn btn-sm btn-outline-warning">✏️ Editar</a>
+                                <a href="{% url 'eliminar_autor' autor.autorid %}" class="btn btn-sm btn-outline-danger">🗑️ Eliminar</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">No hay autores registrados</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

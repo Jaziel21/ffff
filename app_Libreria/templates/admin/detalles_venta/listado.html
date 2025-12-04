@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-verde">Gestión de Detalles de Venta</h1>
+        <a href="{% url 'agregar_detalle_venta' %}" class="btn btn-verde">➕ Agregar Detalle</a>
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID Detalle</th>
+                            <th>Venta ID</th>
+                            <th>Libro</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unit.</th>
+                            <th>Subtotal</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for detalle in detalles %}
+                        <tr>
+                            <td><strong>#{{ detalle.detalleventaid }}</strong></td>
+                            <td>#{{ detalle.ventaid.ventaid }}</td>
+                            <td>
+                                <strong>{{ detalle.libroid.titulo }}</strong><br>
+                                <small class="text-muted">{{ detalle.libroid.autorid.nombre }}</small>
+                            </td>
+                            <td>{{ detalle.cantidad }}</td>
+                            <td>${{ detalle.preciounitario }}</td>
+                            <td><strong class="text-success">${{ detalle.subtotal }}</strong></td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="{% url 'editar_detalle_venta' detalle.detalleventaid %}" class="btn btn-sm btn-outline-warning">✏️</a>
+                                    <a href="{% url 'eliminar_detalle_venta' detalle.detalleventaid %}" class="btn btn-sm btn-outline-danger">🗑️</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center py-4">
+                                <div class="text-muted">
+                                    <i class="fas fa-receipt fa-3x mb-3"></i>
+                                    <h5>No hay detalles de venta registrados</h5>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

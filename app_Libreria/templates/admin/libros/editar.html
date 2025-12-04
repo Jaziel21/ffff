@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-verde mb-4">Editar Libro</h1>
+    
+    <div class="card">
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Título *</label>
+                            <input type="text" class="form-control" name="titulo" value="{{ libro.titulo }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">ISBN *</label>
+                            <input type="text" class="form-control" name="isbn" value="{{ libro.isbn }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Autor *</label>
+                            <select class="form-control" name="autorid" required>
+                                <option value="">Seleccionar autor</option>
+                                {% for autor in autores %}
+                                <option value="{{ autor.autorid }}" {% if autor.autorid == libro.autorid.autorid %}selected{% endif %}>
+                                    {{ autor.nombre }} {{ autor.apellido }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Editorial *</label>
+                            <select class="form-control" name="editorialid" required>
+                                <option value="">Seleccionar editorial</option>
+                                {% for editorial in editoriales %}
+                                <option value="{{ editorial.editorialid }}" {% if editorial.editorialid == libro.editorialid.editorialid %}selected{% endif %}>
+                                    {{ editorial.nombre }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Año Publicación *</label>
+                            <input type="number" class="form-control" name="aniopublicacion" value="{{ libro.aniopublicacion }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Género *</label>
+                            <select class="form-control" name="genero" required>
+                                <option value="">Seleccionar género</option>
+                                <option value="FIC" {% if libro.genero == 'FIC' %}selected{% endif %}>Ficción</option>
+                                <option value="ROM" {% if libro.genero == 'ROM' %}selected{% endif %}>Romance</option>
+                                <option value="TER" {% if libro.genero == 'TER' %}selected{% endif %}>Terror</option>
+                                <option value="CIE" {% if libro.genero == 'CIE' %}selected{% endif %}>Ciencia Ficción</option>
+                                <option value="FAN" {% if libro.genero == 'FAN' %}selected{% endif %}>Fantasía</option>
+                                <option value="HIS" {% if libro.genero == 'HIS' %}selected{% endif %}>Histórico</option>
+                                <option value="BIO" {% if libro.genero == 'BIO' %}selected{% endif %}>Biografía</option>
+                                <option value="INF" {% if libro.genero == 'INF' %}selected{% endif %}>Infantil</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Precio Venta *</label>
+                            <input type="number" step="0.01" class="form-control" name="precioventa" value="{{ libro.precioventa }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Stock *</label>
+                            <input type="number" class="form-control" name="stock" value="{{ libro.stock }}" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Descripción</label>
+                    <textarea class="form-control" name="descripcion" rows="4">{{ libro.descripcion }}</textarea>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Portada Actual</label>
+                    {% if libro.portada %}
+                    <div class="mb-2">
+                        <img src="{{ libro.portada.url }}" width="100" class="img-thumbnail">
+                    </div>
+                    {% endif %}
+                    <input type="file" class="form-control" name="portada" accept="image/*">
+                </div>
+                
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-verde">Actualizar Libro</button>
+                    <a href="{% url 'admin_libros' %}" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

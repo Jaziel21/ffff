@@ -1,0 +1,45 @@
+<!-- app_Libreria/templates/admin/eventos/listado.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-verde">Gestión de Eventos</h1>
+        <a href="{% url 'agregar_evento' %}" class="btn btn-verde">➕ Agregar Evento</a>
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Título</th>
+                            <th>Fecha</th>
+                            <th>Ubicación</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for evento in eventos %}
+                        <tr>
+                            <td>{{ evento.titulo }}</td>
+                            <td>{{ evento.fecha|date:"d M Y H:i" }}</td>
+                            <td>{{ evento.ubicacion }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary">✏️ Editar</button>
+                                <button class="btn btn-sm btn-outline-danger">🗑️ Eliminar</button>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center">No hay eventos registrados</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

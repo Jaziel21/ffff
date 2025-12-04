@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-success text-white">
+            <h3 class="mb-0">✅ Compra Realizada Exitosamente</h3>
+        </div>
+        <div class="card-body">
+            <h4 class="text-verde">Resumen de tu Compra</h4>
+            <p><strong>Número de Venta:</strong> #{{ venta.ventaid }}</p>
+            <p><strong>Fecha:</strong> {{ venta.fechaventa|date:"d M Y H:i" }}</p>
+            <p><strong>Método de Pago:</strong> {{ venta.get_metodopago_display }}</p>
+            
+            <hr>
+            
+            <h5>Detalles de la Compra:</h5>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Libro</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unitario</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for detalle in venta.detalles.all %}
+                        <tr>
+                            <td>{{ detalle.libroid.titulo }}</td>
+                            <td>{{ detalle.cantidad }}</td>
+                            <td>${{ detalle.preciounitario }}</td>
+                            <td>${{ detalle.subtotal }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 offset-md-6">
+                    <div class="d-flex justify-content-between mb-2">
+                        <strong>Total:</strong>
+                        <strong>${{ venta.montototal }}</strong>
+                    </div>
+                    {% if venta.metodopago == 'EFECTIVO' %}
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Pago Recibido:</span>
+                        <span>${{ venta.pagorecibido }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Cambio:</span>
+                        <span>${{ venta.cambio }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="{% url 'libros' %}" class="btn btn-verde">Seguir Comprando</a>
+                <a href="{% url 'inicio' %}" class="btn btn-outline-verde">Volver al Inicio</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Hero Section -->
+    <div class="row align-items-center mb-5">
+        <div class="col-md-6">
+            <h1 class="display-4 text-verde fw-bold">Bienvenido a Librería AJMG</h1>
+            <p class="lead">Descubre un mundo de conocimiento y entretenimiento en nuestra librería.</p>
+        </div>
+        <div class="col-md-6">
+            <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60" 
+                 alt="Librería" class="img-fluid rounded shadow">
+        </div>
+    </div>
+
+    <!-- Libros Destacados -->
+    <h2 class="text-verde mb-4">📚 Libros Destacados</h2>
+    <div class="row">
+        {% for libro in libros %}
+        <div class="col-md-3 mb-4">
+            <div class="card h-100 shadow-sm">
+                {% if libro.portada %}
+                <img src="{{ libro.portada.url }}" class="card-img-top" alt="{{ libro.titulo }}" style="height: 250px; object-fit: cover;">
+                {% else %}
+                <img src="https://via.placeholder.com/200x300/2e8b57/ffffff?text=Portada" class="card-img-top" alt="Portada no disponible" style="height: 250px; object-fit: cover;">
+                {% endif %}
+                
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ libro.titulo }}</h5>
+                    <p class="card-text"><small class="text-muted">por {{ libro.autorid.nombre }} {{ libro.autorid.apellido }}</small></p>
+                    {% if libro.descripcion %}
+                    <p class="card-text">{{ libro.descripcion|truncatewords:20 }}</p>
+                    {% endif %}
+                    <p class="card-text"><strong>${{ libro.precioventa }}</strong></p>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            Stock: {{ libro.stock }} unidades
+                        </small>
+                    </p>
+                    
+                    <div class="mt-auto">
+                        {% if user.is_authenticated and not user.is_staff %}
+                            {% if libro.stock > 0 %}
+                            <a href="{% url 'agregar_al_carrito' libro.libroid %}" class="btn btn-verde w-100">🛒 Agregar al Carrito</a>
+                            {% else %}
+                            <button class="btn btn-secondary w-100" disabled>Sin Stock</button>
+                            {% endif %}
+                        {% elif user.is_authenticated and user.is_staff %}
+                            <button class="btn btn-secondary w-100" disabled>Modo Administrador</button>
+                        {% else %}
+                            <a href="{% url 'login_selector' %}" class="btn btn-outline-verde w-100">Iniciar sesión para comprar</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <h4>No hay libros disponibles</h4>
+                <p>Actualmente no tenemos libros en nuestro catálogo.</p>
+                {% if user.is_authenticated and user.is_staff %}
+                <a href="{% url 'agregar_libro' %}" class="btn btn-verde">Agregar Primer Libro</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,80 @@
+<!-- app_Libreria/templates/blog.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-verde mb-4">📖 Blog de la Librería</h1>
+    
+    {% if entradas %}
+    <div class="row">
+        {% for entrada in entradas %}
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                {% if entrada.imagen %}
+                <img src="{{ entrada.imagen.url }}" class="card-img-top" alt="{{ entrada.titulo }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                <img src="https://via.placeholder.com/500x200/2e8b57/ffffff?text=Blog+Librería" class="card-img-top" alt="Imagen blog" style="height: 200px; object-fit: cover;">
+                {% endif %}
+                
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title text-verde">{{ entrada.titulo }}</h5>
+                    <p class="card-text">{{ entrada.contenido|truncatewords:30 }}</p>
+                    
+                    <div class="mt-auto">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="card-text mb-0">
+                                    <small class="text-muted">
+                                        ✍️ Por <strong>{{ entrada.autor.username }}</strong>
+                                    </small>
+                                </p>
+                            </div>
+                            <div class="text-end">
+                                <p class="card-text mb-0">
+                                    <small class="text-muted">
+                                        📅 {{ entrada.fecha_publicacion|date:"d M Y" }}
+                                    </small>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-footer bg-light">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-success">Publicado</span>
+                        <a href="#" class="btn btn-outline-verde btn-sm">Leer Más →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center">
+        <div class="py-4">
+            <h4>📝 Aún no hay entradas en el blog</h4>
+            <p class="mb-3">Estamos preparando contenido interesante sobre libros, autores y literatura.</p>
+            <p class="text-muted">¡Vuelve pronto para leer nuestros artículos!</p>
+            <a href="{% url 'inicio' %}" class="btn btn-verde mt-2">Volver al Inicio</a>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Newsletter -->
+    <div class="row mt-5">
+        <div class="col-md-8 mx-auto">
+            <div class="card bg-verde text-white">
+                <div class="card-body text-center">
+                    <h4>📧 Suscríbete a nuestro Newsletter</h4>
+                    <p class="mb-3">Recibe las últimas novedades, eventos y artículos del blog directamente en tu email.</p>
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="tu@email.com" aria-label="Email">
+                        <button class="btn btn-light text-verde" type="button">Suscribirse</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

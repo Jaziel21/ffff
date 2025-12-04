@@ -1,0 +1,82 @@
+<!-- app_Libreria/templates/eventos.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-verde mb-4">🎉 Eventos y Actividades</h1>
+    
+    {% if eventos %}
+    <div class="row">
+        {% for evento in eventos %}
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                {% if evento.imagen %}
+                <img src="{{ evento.imagen.url }}" class="card-img-top" alt="{{ evento.titulo }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                <img src="https://via.placeholder.com/500x200/2e8b57/ffffff?text=Evento+Librería" class="card-img-top" alt="Imagen evento" style="height: 200px; object-fit: cover;">
+                {% endif %}
+                
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title text-verde">{{ evento.titulo }}</h5>
+                    <p class="card-text">{{ evento.descripcion }}</p>
+                    
+                    <div class="mt-auto">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="card-text mb-1">
+                                    <small class="text-muted">
+                                        📅 <strong>{{ evento.fecha|date:"d M Y" }}</strong>
+                                    </small>
+                                </p>
+                                <p class="card-text mb-0">
+                                    <small class="text-muted">
+                                        🕒 {{ evento.fecha|date:"H:i" }} hrs
+                                    </small>
+                                </p>
+                            </div>
+                            <div class="text-end">
+                                <p class="card-text mb-0">
+                                    <small class="text-muted">
+                                        📍 {{ evento.ubicacion }}
+                                    </small>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-footer bg-light">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-verde">Evento Activo</span>
+                        <button class="btn btn-outline-verde btn-sm">Confirmar Asistencia</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center">
+        <div class="py-4">
+            <h4>🎭 No hay eventos programados</h4>
+            <p class="mb-3">Próximamente tendremos eventos emocionantes en nuestra librería.</p>
+            <p class="text-muted">¡Mantente atento a nuestras redes sociales!</p>
+            <a href="{% url 'inicio' %}" class="btn btn-verde mt-2">Volver al Inicio</a>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Información de Eventos -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h4 class="text-verde">¿Quieres organizar un evento con nosotros?</h4>
+                    <p class="mb-3">Contamos con espacio para presentaciones de libros, clubes de lectura y actividades culturales.</p>
+                    <a href="{% url 'contacto' %}" class="btn btn-verde">Contáctanos</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

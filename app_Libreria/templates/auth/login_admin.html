@@ -1,0 +1,43 @@
+<!-- auth/login_admin.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-verde text-white text-center">
+                    <h4>🔐 Login Administrador</h4>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-danger">{{ message }}</div>
+                    {% endfor %}
+                    {% endif %}
+                    
+                    <form method="post">
+                        {% csrf_token %}  <!-- ¡ESTO ES IMPORTANTE! -->
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Usuario</label>
+                            <input type="text" class="form-control" name="username" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" name="password" required>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-verde w-100">Ingresar</button>
+                    </form>
+                    
+                    <div class="text-center mt-3">
+                        <a href="{% url 'login_selector' %}" class="text-verde">← Volver a selección</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

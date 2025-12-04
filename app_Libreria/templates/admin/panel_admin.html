@@ -1,0 +1,136 @@
+<!-- app_Libreria/templates/admin/panel_admin.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-verde mb-4">⚙️ Panel de Administración</h1>
+    
+    <!-- Estadísticas -->
+    <div class="row mt-4">
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-verde">
+                <div class="card-body text-center">
+                    <h3>{{ stats.total_libros }}</h3>
+                    <p><i class="fas fa-book fa-2x mb-2"></i><br>Libros</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-success">
+                <div class="card-body text-center">
+                    <h3>{{ stats.total_ventas }}</h3>
+                    <p><i class="fas fa-shopping-cart fa-2x mb-2"></i><br>Ventas</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-info">
+                <div class="card-body text-center">
+                    <h3>{{ stats.total_usuarios }}</h3>
+                    <p><i class="fas fa-users fa-2x mb-2"></i><br>Usuarios</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body text-center">
+                    <h3>{{ stats.total_eventos }}</h3>
+                    <p><i class="fas fa-calendar-alt fa-2x mb-2"></i><br>Eventos</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Gestión de Contenido -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-verde text-white">
+                    <h5 class="mb-0"><i class="fas fa-cogs me-2"></i>Gestión de Contenido</h5>
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'admin_libros' %}" class="btn btn-verde w-100 mb-2">
+                        <i class="fas fa-book me-2"></i>Gestionar Libros
+                    </a>
+                    <a href="{% url 'admin_autores' %}" class="btn btn-verde w-100 mb-2">
+                        <i class="fas fa-user-edit me-2"></i>Gestionar Autores
+                    </a>
+                    <a href="{% url 'admin_editoriales' %}" class="btn btn-verde w-100 mb-2">
+                        <i class="fas fa-building me-2"></i>Gestionar Editoriales
+                    </a>
+                    <a href="{% url 'admin_ventas' %}" class="btn btn-verde w-100 mb-2">
+                        <i class="fas fa-chart-line me-2"></i>Gestionar Ventas
+                    </a>
+                    <a href="{% url 'admin_eventos' %}" class="btn btn-verde w-100 mb-2">
+                        <i class="fas fa-calendar me-2"></i>Gestionar Eventos
+                    </a>
+                    <a href="{% url 'admin_blog' %}" class="btn btn-verde w-100">
+                        <i class="fas fa-blog me-2"></i>Gestionar Blog
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Ventas Recientes</h5>
+                </div>
+                <div class="card-body">
+                    {% if ventas_recientes %}
+                    <div class="list-group">
+                        {% for venta in ventas_recientes %}
+                        <a href="{% url 'detalle_venta_admin' venta.id %}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Venta #{{ venta.id }}</h6>
+                                <small>${{ venta.monto_total }}</small>
+                            </div>
+                            <p class="mb-1">{{ venta.cliente.username }}</p>
+                            <small class="text-muted">{{ venta.fecha_venta|date:"d M Y H:i" }}</small>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center">No hay ventas recientes</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Acciones Rápidas -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Acciones Rápidas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-2">
+                            <a href="{% url 'agregar_libro' %}" class="btn btn-outline-verde w-100">
+                                <i class="fas fa-plus me-1"></i>Nuevo Libro
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{% url 'agregar_autor' %}" class="btn btn-outline-verde w-100">
+                                <i class="fas fa-user-plus me-1"></i>Nuevo Autor
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{% url 'agregar_evento' %}" class="btn btn-outline-verde w-100">
+                                <i class="fas fa-calendar-plus me-1"></i>Nuevo Evento
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{% url 'agregar_entrada_blog' %}" class="btn btn-outline-verde w-100">
+                                <i class="fas fa-edit me-1"></i>Nuevo Blog
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

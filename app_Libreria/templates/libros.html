@@ -1,0 +1,447 @@
+<!-- app_Libreria/templates/libros.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-verde">📚 Todos Nuestros Libros</h1>
+        <div class="d-flex gap-2">
+            <a href="{% url 'ver_carrito' %}" class="btn btn-verde position-relative">
+                🛒 Carrito
+                {% if user.is_authenticated and not user.is_staff %}
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    {{ user.carrito_set.count }}
+                </span>
+                {% endif %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="form-label">Género</label>
+                    <select class="form-select" id="filtroGenero">
+                        <option value="">Todos los géneros</option>
+                        <option value="FIC">Ficción</option>
+                        <option value="ROM">Romance</option>
+                        <option value="TER">Terror</option>
+                        <option value="CIE">Ciencia Ficción</option>
+                        <option value="FAN">Fantasía</option>
+                        <option value="HIS">Histórico</option>
+                        <option value="BIO">Biografía</option>
+                        <option value="INF">Infantil</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-4">
+                    <label class="form-label">Precio Máximo</label>
+                    
+                    <!-- Input manual para precio -->
+                    <div class="input-group mb-2">
+                        <span class="input-group-text">$</span>
+                        <input type="number" class="form-control" id="inputPrecio" 
+                               min="0" max="1000" step="10" value="1000"
+                               placeholder="Ingresa precio máximo">
+                        <button class="btn btn-outline-verde" type="button" id="btnAplicarPrecio">
+                            Aplicar
+                        </button>
+                    </div>
+                    
+                    <!-- Slider para precio -->
+                    <input type="range" class="form-range" id="filtroPrecio" min="0" max="1000" step="10" value="1000">
+                    <div class="d-flex justify-content-between align-items-center mt-1">
+                        <small class="text-muted">$0</small>
+                        <span id="precioMaximo" class="badge bg-verde">$1000</span>
+                        <small class="text-muted">$1000</small>
+                    </div>
+                    
+                    <div class="mt-2">
+                        <button class="btn btn-sm btn-outline-secondary w-100" onclick="filtrarPrecioRapido(100)">
+                            ≤ $100
+                        </button>
+                        <div class="d-flex gap-1 mt-1">
+                            <button class="btn btn-sm btn-outline-secondary flex-fill" onclick="filtrarPrecioRapido(250)">
+                                ≤ $250
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary flex-fill" onclick="filtrarPrecioRapido(500)">
+                                ≤ $500
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <label class="form-label">Disponibilidad</label>
+                    <select class="form-select" id="filtroStock">
+                        <option value="">Todos</option>
+                        <option value="con_stock">Con stock</option>
+                        <option value="sin_stock">Sin stock</option>
+                    </select>
+                    
+                    <!-- Filtro adicional: Ordenar por -->
+                    <label class="form-label mt-3">Ordenar por</label>
+                    <select class="form-select" id="filtroOrden">
+                        <option value="default">Predeterminado</option>
+                        <option value="precio_asc">Precio: Menor a Mayor</option>
+                        <option value="precio_desc">Precio: Mayor a Menor</option>
+                        <option value="titulo_asc">Título: A-Z</option>
+                        <option value="titulo_desc">Título: Z-A</option>
+                    </select>
+                    
+                    <!-- Botón para limpiar filtros -->
+                    <button class="btn btn-sm btn-outline-danger w-100 mt-3" onclick="limpiarFiltros()">
+                        🗑️ Limpiar Filtros
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Libros -->
+    <div class="row" id="lista-libros">
+        {% for libro in libros %}
+        <div class="col-md-3 mb-4 libro-item" 
+             data-genero="{{ libro.genero }}" 
+             data-precio="{{ libro.precioventa }}" 
+             data-stock="{{ libro.stock }}"
+             data-titulo="{{ libro.titulo|lower }}">
+            <div class="card h-100 shadow-sm">
+                {% if libro.portada %}
+                <img src="{{ libro.portada.url }}" class="card-img-top" alt="{{ libro.titulo }}" style="height: 250px; object-fit: cover;">
+                {% else %}
+                <img src="https://via.placeholder.com/200x300/2e8b57/ffffff?text=Portada" class="card-img-top" alt="Portada no disponible" style="height: 250px; object-fit: cover;">
+                {% endif %}
+                
+                <div class="card-body d-flex flex-column">
+                    <h6 class="card-title">{{ libro.titulo }}</h6>
+                    <p class="card-text"><small class="text-muted">por {{ libro.autorid.nombre }} {{ libro.autorid.apellido }}</small></p>
+                    {% if libro.descripcion %}
+                    <p class="card-text"><small>{{ libro.descripcion|truncatewords:12 }}</small></p>
+                    {% endif %}
+                    
+                    <div class="mt-auto">
+                        <p class="card-text mb-1">
+                            <strong class="text-verde">${{ libro.precioventa }}</strong>
+                        </p>
+                        <p class="card-text mb-2">
+                            <small class="{% if libro.stock > 0 %}text-success{% else %}text-danger{% endif %}">
+                                {% if libro.stock > 0 %}
+                                ✅ {{ libro.stock }} disponibles
+                                {% else %}
+                                ❌ Agotado
+                                {% endif %}
+                            </small>
+                        </p>
+                        
+                        {% if user.is_authenticated and not user.is_staff %}
+                            {% if libro.stock > 0 %}
+                            <a href="{% url 'agregar_al_carrito' libro.libroid %}" class="btn btn-verde w-100 btn-sm">🛒 Agregar</a>
+                            {% else %}
+                            <button class="btn btn-secondary w-100 btn-sm" disabled>No Disponible</button>
+                            {% endif %}
+                        {% elif user.is_authenticated and user.is_staff %}
+                            <button class="btn btn-outline-secondary w-100 btn-sm" disabled>Modo Admin</button>
+                        {% else %}
+                            <a href="{% url 'login_selector' %}" class="btn btn-outline-verde w-100 btn-sm">Iniciar Sesión</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <h4>No hay libros disponibles en este momento</h4>
+                <p>Estamos trabajando para agregar nuevos títulos a nuestro catálogo.</p>
+                <a href="{% url 'inicio' %}" class="btn btn-verde">Volver al Inicio</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Contador de resultados -->
+    <div class="mt-4 text-center">
+        <div class="alert alert-light border">
+            <p class="mb-1">Mostrando <span id="contador-libros" class="badge bg-verde">{{ libros.count }}</span> libros de <span class="badge bg-secondary">{{ libros.count }}</span> totales</p>
+            <p class="mb-0 text-muted" id="info-filtros">Filtros activos: <span class="text-verde">Ninguno</span></p>
+        </div>
+    </div>
+</div>
+
+<script>
+// Variables globales
+let librosData = [];
+let filtroGenero = '';
+let filtroPrecio = 1000;
+let filtroStock = '';
+let filtroOrden = 'default';
+
+// Inicializar datos de libros
+document.addEventListener('DOMContentLoaded', function() {
+    // Guardar datos originales de los libros
+    const libroItems = document.querySelectorAll('.libro-item');
+    libroItems.forEach(item => {
+        librosData.push({
+            element: item,
+            genero: item.getAttribute('data-genero'),
+            precio: parseFloat(item.getAttribute('data-precio')),
+            stock: parseInt(item.getAttribute('data-stock')),
+            titulo: item.getAttribute('data-titulo')
+        });
+    });
+    
+    // Inicializar elementos del DOM
+    const filtroGeneroEl = document.getElementById('filtroGenero');
+    const filtroPrecioEl = document.getElementById('filtroPrecio');
+    const inputPrecioEl = document.getElementById('inputPrecio');
+    const filtroStockEl = document.getElementById('filtroStock');
+    const filtroOrdenEl = document.getElementById('filtroOrden');
+    const contador = document.getElementById('contador-libros');
+    const infoFiltros = document.getElementById('info-filtros');
+    const btnAplicarPrecio = document.getElementById('btnAplicarPrecio');
+    const precioMaximo = document.getElementById('precioMaximo');
+
+    // Sincronizar slider con input
+    function sincronizarPrecio() {
+        const precioSlider = parseInt(filtroPrecioEl.value);
+        inputPrecioEl.value = precioSlider;
+        precioMaximo.textContent = `$${precioSlider}`;
+        filtroPrecio = precioSlider;
+    }
+
+    // Sincronizar input con slider
+    function sincronizarInput() {
+        let precioInput = parseInt(inputPrecioEl.value);
+        
+        // Validar rango
+        if (precioInput < 0) precioInput = 0;
+        if (precioInput > 1000) precioInput = 1000;
+        
+        inputPrecioEl.value = precioInput;
+        filtroPrecioEl.value = precioInput;
+        precioMaximo.textContent = `$${precioInput}`;
+        filtroPrecio = precioInput;
+    }
+
+    // Event listeners
+    filtroGeneroEl.addEventListener('change', function() {
+        filtroGenero = this.value;
+        actualizarFiltros();
+    });
+
+    filtroStockEl.addEventListener('change', function() {
+        filtroStock = this.value;
+        actualizarFiltros();
+    });
+
+    filtroOrdenEl.addEventListener('change', function() {
+        filtroOrden = this.value;
+        actualizarFiltros();
+    });
+
+    // Slider de precio
+    filtroPrecioEl.addEventListener('input', function() {
+        sincronizarPrecio();
+        actualizarFiltros();
+    });
+
+    // Input manual de precio
+    inputPrecioEl.addEventListener('input', function() {
+        precioMaximo.textContent = `$${this.value}`;
+    });
+
+    // Botón aplicar precio
+    btnAplicarPrecio.addEventListener('click', function() {
+        sincronizarInput();
+        actualizarFiltros();
+    });
+
+    // Aplicar precio al presionar Enter
+    inputPrecioEl.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sincronizarInput();
+            actualizarFiltros();
+        }
+    });
+
+    function actualizarFiltros() {
+        let visibles = 0;
+        let filtrosActivos = [];
+        
+        // Crear copia ordenable de los datos
+        let librosFiltrados = [...librosData];
+        
+        // Aplicar filtros
+        librosFiltrados = librosFiltrados.filter(libro => {
+            let mostrar = true;
+
+            // Filtro por género
+            if (filtroGenero && libro.genero !== filtroGenero) {
+                mostrar = false;
+            }
+
+            // Filtro por precio
+            if (libro.precio > filtroPrecio) {
+                mostrar = false;
+            }
+
+            // Filtro por stock
+            if (filtroStock === 'con_stock' && libro.stock === 0) {
+                mostrar = false;
+            } else if (filtroStock === 'sin_stock' && libro.stock > 0) {
+                mostrar = false;
+            }
+
+            return mostrar;
+        });
+
+        // Aplicar ordenamiento
+        librosFiltrados.sort((a, b) => {
+            switch (filtroOrden) {
+                case 'precio_asc':
+                    return a.precio - b.precio;
+                case 'precio_desc':
+                    return b.precio - a.precio;
+                case 'titulo_asc':
+                    return a.titulo.localeCompare(b.titulo);
+                case 'titulo_desc':
+                    return b.titulo.localeCompare(a.titulo);
+                default:
+                    return 0; // Mantener orden original
+            }
+        });
+
+        // Ocultar todos primero
+        librosData.forEach(libro => {
+            libro.element.style.display = 'none';
+        });
+
+        // Mostrar los filtrados en el orden correcto
+        const listaContainer = document.getElementById('lista-libros');
+        librosFiltrados.forEach(libro => {
+            // Mover el elemento al final para respetar el orden
+            listaContainer.appendChild(libro.element);
+            libro.element.style.display = 'block';
+            visibles++;
+        });
+
+        // Actualizar contador
+        contador.textContent = visibles;
+
+        // Actualizar información de filtros activos
+        if (filtroGenero) filtrosActivos.push(`Género: ${filtroGeneroEl.options[filtroGeneroEl.selectedIndex].text}`);
+        if (filtroPrecio < 1000) filtrosActivos.push(`Precio ≤ $${filtroPrecio}`);
+        if (filtroStock) filtrosActivos.push(`Stock: ${filtroStockEl.options[filtroStockEl.selectedIndex].text}`);
+        if (filtroOrden !== 'default') filtrosActivos.push(`Orden: ${filtroOrdenEl.options[filtroOrdenEl.selectedIndex].text}`);
+
+        if (filtrosActivos.length > 0) {
+            infoFiltros.innerHTML = `Filtros activos: <span class="text-verde">${filtrosActivos.join(', ')}</span>`;
+        } else {
+            infoFiltros.innerHTML = `Filtros activos: <span class="text-verde">Ninguno</span>`;
+        }
+    }
+
+    // Funciones de filtros rápidos
+    window.filtrarPrecioRapido = function(precio) {
+        filtroPrecio = precio;
+        filtroPrecioEl.value = precio;
+        inputPrecioEl.value = precio;
+        precioMaximo.textContent = `$${precio}`;
+        actualizarFiltros();
+    };
+
+    // Función para limpiar filtros
+    window.limpiarFiltros = function() {
+        filtroGeneroEl.value = '';
+        filtroPrecioEl.value = 1000;
+        inputPrecioEl.value = 1000;
+        filtroStockEl.value = '';
+        filtroOrdenEl.value = 'default';
+        
+        filtroGenero = '';
+        filtroPrecio = 1000;
+        filtroStock = '';
+        filtroOrden = 'default';
+        
+        precioMaximo.textContent = '$1000';
+        actualizarFiltros();
+    };
+
+    // Inicializar
+    sincronizarPrecio();
+    actualizarFiltros();
+    
+    console.log('Filtros inicializados correctamente');
+    console.log(`Total de libros: ${librosData.length}`);
+});
+</script>
+
+<style>
+.libro-item {
+    transition: all 0.3s ease;
+}
+
+.libro-item:hover {
+    transform: translateY(-5px);
+}
+
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* Estilos para el slider de precio */
+#filtroPrecio {
+    height: 6px;
+    border-radius: 3px;
+    background: #dee2e6;
+}
+
+#filtroPrecio::-webkit-slider-thumb {
+    background: var(--verde-principal);
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+#filtroPrecio::-moz-range-thumb {
+    background: var(--verde-principal);
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Estilos para los botones de filtro rápido */
+.btn-outline-secondary {
+    border-color: #6c757d;
+    color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+    background-color: var(--verde-principal);
+    border-color: var(--verde-principal);
+    color: white;
+}
+
+/* Estilos para el input de precio */
+#inputPrecio:focus {
+    border-color: var(--verde-principal);
+    box-shadow: 0 0 0 0.2rem rgba(46, 139, 87, 0.25);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .col-md-4 {
+        margin-bottom: 20px;
+    }
+    
+    .input-group {
+        flex-wrap: nowrap;
+    }
+}
+</style>
+{% endblock %}

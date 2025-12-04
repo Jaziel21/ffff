@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-verde mb-4">Agregar Nuevo Autor</h1>
+    
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+    
+    <div class="card">
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre *</label>
+                            <input type="text" class="form-control" name="nombre" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Apellido *</label>
+                            <input type="text" class="form-control" name="apellido" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Nacionalidad *</label>
+                            <input type="text" class="form-control" name="nacionalidad" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Fecha de Nacimiento *</label>
+                            <input type="date" class="form-control" name="fechanacimiento" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Bibliografía</label>
+                    <textarea class="form-control" name="bibliografia" rows="4"></textarea>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Página Web</label>
+                    <input type="url" class="form-control" name="paginaweb" placeholder="https://ejemplo.com">
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Foto</label>
+                    <input type="file" class="form-control" name="foto" accept="image/*">
+                </div>
+                
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-verde">Guardar Autor</button>
+                    <a href="{% url 'admin_autores' %}" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

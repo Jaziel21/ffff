@@ -1,0 +1,45 @@
+<!-- app_Libreria/templates/carrito.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-verde mb-4">Mis Compras</h1>
+    
+    {% if ventas %}
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID Venta</th>
+                            <th>Fecha</th>
+                            <th>Total</th>
+                            <th>Detalles</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for venta in ventas %}
+                        <tr>
+                            <td>#{{ venta.id }}</td>
+                            <td>{{ venta.fecha_venta|date:"d M Y H:i" }}</td>
+                            <td>${{ venta.total }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-verde">Ver Detalles</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center">
+        <h4>No tienes compras realizadas</h4>
+        <p>Visita nuestra sección de libros para realizar tu primera compra.</p>
+        <a href="{% url 'libros' %}" class="btn btn-verde">Ver Libros</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

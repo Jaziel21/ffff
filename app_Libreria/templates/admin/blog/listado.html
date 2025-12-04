@@ -1,0 +1,45 @@
+<!-- app_Libreria/templates/admin/blog/listado.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-verde">Gestión del Blog</h1>
+        <a href="{% url 'agregar_entrada_blog' %}" class="btn btn-verde">➕ Agregar Entrada</a>
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Título</th>
+                            <th>Autor</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entrada in entradas %}
+                        <tr>
+                            <td>{{ entrada.titulo }}</td>
+                            <td>{{ entrada.autor.username }}</td>
+                            <td>{{ entrada.fecha_publicacion|date:"d M Y" }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary">✏️ Editar</button>
+                                <button class="btn btn-sm btn-outline-danger">🗑️ Eliminar</button>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center">No hay entradas en el blog</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

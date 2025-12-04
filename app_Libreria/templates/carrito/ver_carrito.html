@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-verde mb-4">🛒 Mi Carrito de Compras</h1>
+    
+    {% if items_carrito %}
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-verde text-white">
+                    <h5 class="mb-0">Productos en el Carrito</h5>
+                </div>
+                <div class="card-body">
+                    {% for item in items_carrito %}
+                    <div class="row align-items-center mb-3 pb-3 border-bottom">
+                        <div class="col-md-2">
+                            {% if item.libro.portada %}
+                            <img src="{{ item.libro.portada.url }}" class="img-fluid rounded" alt="{{ item.libro.titulo }}" style="height: 80px; object-fit: cover;">
+                            {% else %}
+                            <img src="https://via.placeholder.com/60x80/2e8b57/ffffff?text=Portada" class="img-fluid rounded" alt="Portada">
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="mb-1">{{ item.libro.titulo }}</h6>
+                            <small class="text-muted">por {{ item.libro.autorid.nombre }} {{ item.libro.autorid.apellido }}</small>
+                        </div>
+                        <div class="col-md-2">
+                            <strong>${{ item.libro.precioventa }}</strong>
+                        </div>
+                        <div class="col-md-2">
+                            <form method="post" action="{% url 'actualizar_carrito' item.carritoid %}">
+                                {% csrf_token %}
+                                <input type="number" name="cantidad" value="{{ item.cantidad }}" min="1" max="{{ item.libro.stock }}" class="form-control form-control-sm">
+                            </form>
+                        </div>
+                        <div class="col-md-2">
+                            <strong>${{ item.subtotal }}</strong>
+                            <a href="{% url 'eliminar_del_carrito' item.carritoid %}" class="btn btn-sm btn-outline-danger ms-2" onclick="return confirm('¿Eliminar este libro del carrito?')">🗑️</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-verde text-white">
+                    <h5 class="mb-0">Resumen de Compra</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal:</span>
+                        <strong>${{ total_carrito }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>IVA (16%):</span>
+                        <strong>${{ total_carrito|floatformat:2 }}</strong>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span><strong>Total:</strong></span>
+                        <strong>${{ total_carrito }}</strong>
+                    </div>
+                    
+                    <!-- Formulario de pago -->
+                    <form method="post" action="{% url 'procesar_compra' %}" id="form-pago">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">Método de Pago *</label>
+                            <select name="metodo_pago" class="form-select" required id="metodo-pago">
+                                <option value="">Seleccionar...</option>
+                                <option value="EFECTIVO">Efectivo</option>
+                                <option value="TARJETA">Tarjeta</option>
+                                <option value="TRANSFERENCIA">Transferencia</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3" id="campo-efectivo" style="display: none;">
+                            <label class="form-label">Pago Recibido (Efectivo) *</label>
+                            <input type="number" step="0.01" name="pago_recibido" class="form-control" 
+                                placeholder="0.00" min="0" id="pago-recibido">
+                            <small class="text-muted">Ingresa la cantidad recibida en efectivo (mínimo ${{ total_carrito|floatformat:2 }})</small>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-verde w-100" id="btn-comprar">Realizar Compra</button>
+                    </form>
+                    
+                    <div class="text-center mt-3">
+                        <a href="{% url 'libros' %}" class="btn btn-outline-verde">Seguir Comprando</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center">
+        <h4>Tu carrito está vacío</h4>
+        <p>Descubre nuestros libros y agrega algunos a tu carrito.</p>
+        <a href="{% url 'libros' %}" class="btn btn-verde">Explorar Libros</a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    // Mostrar/ocultar campo de efectivo
+    document.getElementById('metodo-pago').addEventListener('change', function() {
+        const campoEfectivo = document.getElementById('campo-efectivo');
+        if (this.value === 'EFECTIVO') {
+            campoEfectivo.style.display = 'block';
+        } else {
+            campoEfectivo.style.display = 'none';
+        }
+    });
+    
+    // Actualizar cantidad automáticamente
+    document.querySelectorAll('input[name="cantidad"]').forEach(input => {
+        input.addEventListener('change', function() {
+            if (this.value > 0) {
+                this.form.submit();
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,167 @@
+<!-- app_Libreria/templates/contacto.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-verde mb-4">📞 Contáctanos</h1>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-verde text-white">
+                    <h5 class="mb-0">Envíanos un Mensaje</h5>
+                </div>
+                <div class="card-body">
+                    <form id="formContacto">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Nombre Completo *</label>
+                                    <input type="text" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Email *</label>
+                                    <input type="email" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Asunto *</label>
+                            <select class="form-select" required>
+                                <option value="">Seleccionar asunto...</option>
+                                <option value="consulta">Consulta General</option>
+                                <option value="pedido">Información de Pedidos</option>
+                                <option value="eventos">Eventos y Actividades</option>
+                                <option value="sugerencia">Sugerencias</option>
+                                <option value="problema">Reportar Problema</option>
+                                <option value="otros">Otros</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Mensaje *</label>
+                            <textarea class="form-control" rows="6" placeholder="Escribe tu mensaje aquí..." required></textarea>
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="newsletter" checked>
+                            <label class="form-check-label" for="newsletter">
+                                Suscribirme al newsletter para recibir novedades
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-verde btn-lg">
+                            📨 Enviar Mensaje
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <!-- Información de Contacto -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">ℹ️ Información de Contacto</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6>📍 Dirección</h6>
+                        <p class="mb-0">Av. Librería 123</p>
+                        <p class="mb-0">Col. Centro</p>
+                        <p>Ciudad de México, 06000</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>📞 Teléfonos</h6>
+                        <p class="mb-1">+52 55 1234 5678</p>
+                        <p class="mb-0">+52 55 9876 5432</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>📧 Email</h6>
+                        <p class="mb-1">info@libreriaajmg.com</p>
+                        <p class="mb-0">ventas@libreriaajmg.com</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>🕒 Horario de Atención</h6>
+                        <p class="mb-1">Lunes a Viernes: 9:00 - 19:00</p>
+                        <p class="mb-1">Sábados: 10:00 - 16:00</p>
+                        <p class="mb-0">Domingos: Cerrado</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Redes Sociales -->
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">🌐 Síguenos en Redes</h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="d-flex justify-content-around mb-3">
+                        <a href="#" class="btn btn-outline-primary btn-sm">📘 Facebook</a>
+                        <a href="#" class="btn btn-outline-info btn-sm">🐦 Twitter</a>
+                        <a href="#" class="btn btn-outline-danger btn-sm">📷 Instagram</a>
+                    </div>
+                    <p class="text-muted small mb-0">
+                        Mantente al día con nuestras novedades y promociones
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mapa -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">🗺️ Nuestra Ubicación</h5>
+                </div>
+                <div class="card-body">
+                    <div class="bg-light rounded text-center py-5">
+                        <h5 class="text-muted">📍 Mapa Interactivo</h5>
+                        <p class="text-muted mb-0">Aquí se mostraría un mapa con nuestra ubicación</p>
+                        <div class="mt-3">
+                            <button class="btn btn-verde me-2">Ver en Google Maps</button>
+                            <button class="btn btn-outline-verde">Cómo Llegar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('formContacto').addEventListener('submit', function(e) {
+        e.preventDefault();
+        alert('¡Gracias por tu mensaje! Te contactaremos pronto.');
+        this.reset();
+    });
+</script>
+
+<style>
+    .card {
+        transition: transform 0.2s;
+    }
+    
+    .card:hover {
+        transform: translateY(-2px);
+    }
+    
+    .btn-outline-verde {
+        border-color: var(--verde-principal);
+        color: var(--verde-principal);
+    }
+    
+    .btn-outline-verde:hover {
+        background-color: var(--verde-principal);
+        color: white;
+    }
+</style>
+{% endblock %}

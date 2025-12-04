@@ -1,0 +1,43 @@
+<!-- app_Libreria/templates/auth/login_selector.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-verde text-white text-center">
+                    <h3>Iniciar Sesión</h3>
+                    <p class="mb-0">Selecciona tu tipo de usuario</p>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="card text-center h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">👤 Cliente</h5>
+                                    <p class="card-text">Accede para comprar libros</p>
+                                    <a href="{% url 'login_cliente' %}" class="btn btn-verde">Cliente</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card text-center h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">⚙️ Administrador</h5>
+                                    <p class="card-text">Panel de gestión</p>
+                                    <a href="{% url 'login_admin' %}" class="btn btn-outline-verde">Administrador</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-3">
+                        <a href="{% url 'inicio' %}" class="btn btn-secondary">Volver al Inicio</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

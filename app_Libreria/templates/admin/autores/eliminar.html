@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-danger text-white">
+            <h3 class="mb-0">Eliminar Autor</h3>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-warning">
+                <h4>¿Estás seguro de que quieres eliminar al autor?</h4>
+                <p><strong>Nombre:</strong> {{ autor.nombre }} {{ autor.apellido }}</p>
+                <p><strong>Nacionalidad:</strong> {{ autor.nacionalidad }}</p>
+                <p class="mb-0">Esta acción no se puede deshacer y afectará a todos los libros asociados a este autor.</p>
+            </div>
+            
+            <form method="post">
+                {% csrf_token %}
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-danger">Sí, eliminar autor</button>
+                    <a href="{% url 'admin_autores' %}" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
